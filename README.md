@@ -1,6 +1,6 @@
 # Proyecto_BDNR_ApuestasDeportivas
 ## Integrantes: 
-    José Israel León Sermeño--758192
+    José Israel León Zermeño--758192    
     Yeshua Miranda Morales-- 758258
     Carlos Omar Barajas Barragan-- 
 
@@ -9,7 +9,5 @@ La aplicación que vamos a replicar a partir de la base de datos es una casa de 
 
 ## Flujo de trabajo (que se corre para insertar datos, cómo se van a correr las consultas etc) Nota: Este lo pueden mejorar conforme avancen en el proyecto, ahorita es un draft inicial.
 La carga inicial de datos se realizará mediante archivos JSON, los cuales servirán como fuente principal para poblar las bases de datos MongoDB y Dgraph. Posteriormente, esta información se exportará y organizará en archivos de Excel para facilitar su revisión, validación y adaptación al formato requerido por Cassandra.
-
 Una vez cargada la información, las consultas se ejecutarán desde una interfaz gráfica que funcionará como punto de interacción para el usuario. Las funcionalidades estarán organizadas de acuerdo con las necesidades de la aplicación y no dependerán directamente de una base de datos en particular. Es decir, el usuario podrá acceder a las distintas funcionalidades sin necesidad de conocer qué base de datos se utiliza para obtener la información.
-
 A nivel interno, cada funcionalidad se comunicará con la base de datos correspondiente según el tipo de información que necesite consultar o modificar. De esta manera, se busca aprovechar las fortalezas de Cassandra, MongoDB y Dgraph, manteniendo una experiencia de usuario consistente y centralizada.

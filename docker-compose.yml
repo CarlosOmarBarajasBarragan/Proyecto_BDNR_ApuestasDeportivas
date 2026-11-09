@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_apuestas
+    ports:
+      - "27017:27017"
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra_apuestas
+    ports:
+      - "9042:9042"
+    restart: unless-stopped
+    environment:
+      - CASSANDRA_CLUSTER_NAME=ApuestasCluster
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+
+  dgraph:
+    image: dgraph/standalone:latest
+    container_name: dgraph_apuestas
+    ports:
+      - "8080:8080" # Puerto HTTP (Consultas REST)
+      - "9080:9080" # Puerto gRPC (Obligatorio para conectarse con pydgraph)
+    restart: unless-stopped
+    volumes:
+      - dgraph_data:/dgraph
+
+  ratel:
+    image: dgraph/ratel:latest
+    container_name: ratel_apuestas
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
+  cassandra_data:
+  dgraph_data:

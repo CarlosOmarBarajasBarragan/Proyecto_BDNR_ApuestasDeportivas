@@ -1,4 +1,3 @@
 pymongo
 cassandra-driver
 pydgraph
-grpcio

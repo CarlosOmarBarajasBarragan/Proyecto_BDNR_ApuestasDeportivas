@@ -49,7 +49,8 @@ def menu():
                     print("\n--- DATOS DE MI PERFIL ---")
                     print("1. Consultar por identificador/email del usuario autenticado (Req. 2 - MongoDB)")
                     print("2. Ranking de jugadores (Regional)")
-                    print("3. Volver al menu principal")
+                    print("3. Mejores usuarios por región (DGraph)")
+                    print("4. Volver al menu principal")
 
 
                     opt = input("Selecciona una opción: ")
@@ -59,6 +60,9 @@ def menu():
                     elif opt == "2":
                         print(" AQUI VA LA FUNCION PARA MOSTRAR EL RANKING DE JUGADORES")
                     elif opt == "3":
+                        region = input("Ingrese la región (América o Europa): ")
+                        print("AQUI VA LA FUNCION PARA MOSTRAR LOS MEJORES USUARIOS POR REGION")
+                    elif opt == "4":
                         pass
 
                 elif user_opc == "2":
@@ -103,8 +107,8 @@ def menu():
                 elif user_opc == "4":
                     print("\n--- MIS AMIGOS ---")
                     print(" AQUI VA LA FUNCION PARA MOSTRAR LA LISTA DE AMIGOS")
-                    print("1. Competencia semanal vs amigo")
-                    print("2. Apuestas populares entre amigos")
+                    print("1. Competencia semanal VS amigo (DGraph)")
+                    print("2. Apuestas más populares del amigo por categoría (DGraph)")
                     print("3. Volver al menu principal")
 
 
@@ -113,10 +117,11 @@ def menu():
                     if opt == "1":
                         amigo = input("Ingrese el nombre del amigo: ")
                         semana = input("Ingrese la semana (1-52): ")
-                        print(" AQUI VA LA FUNCION PARA MOSTRAR LA COMPETENCIA SEMANAL VS AMIGO")
+                        print("AQUI VA LA FUNCION PARA MOSTRAR APUESTAS GANADAS/PERDIDAS, PORCENTAJES Y GANADOR SEMANAL")
                     elif opt == "2":
                         amigo = input("Ingrese el nombre del amigo: ")
-                        print(" AQUI VA LA FUNCION PARA MOSTRAR LAS APUESTAS POPULARES ENTRE AMIGOS")
+                        categoria = input("Ingrese la categoría (Jugador, Equipo o Torneo): ")
+                        print("AQUI VA LA FUNCION PARA MOSTRAR LAS APUESTAS MAS POPULARES DEL AMIGO POR CATEGORIA")
                     elif opt == "3":
                         pass
 
@@ -131,7 +136,8 @@ def menu():
                 print("3. Requerimiento 3 - Top 5 goleadores por torneo - Cassandra")
                 print("4. Requerimiento 4 - Porteros más goleados del torneo - Cassandra")
                 print("5. Requerimiento 5 - Historial de partidos de un torneo - Cassandra")
-                print("6. Volver al menu principal")
+                print("6. Mejores jugadores de la liga (DGraph)")
+                print("7. Volver al menu principal")
 
 
                 option = input("Selecciona una opción: ")
@@ -157,6 +163,9 @@ def menu():
                             print("La jornada debe ser un número entero.")
                     print("AQUI VA LA FUNCION DEL REQUERIMIENTO 5 - Cassandra")
                 elif option == "6":
+                    temporada = input("Ingrese la temporada: ")
+                    print("AQUI VA LA FUNCION PARA MOSTRAR LOS MEJORES JUGADORES DE LA LIGA")
+                elif option == "7":
                     pass
             
             elif user_option == "3":
@@ -164,7 +173,8 @@ def menu():
                 print("1. Consultar por nombre del equipo (Req. 7 - MongoDB)")
                 print("2. Requerimiento 6 - Historial de tarjetas de un equipo - Cassandra")
                 print("3. Requerimiento 7 - Historial de partidos de un equipo - Cassandra")
-                print("4. Volver al menu principal")
+                print("4. Equipos similares por región (DGraph)")
+                print("5. Volver al menu principal")
 
                 team_option = input("Selecciona una opción: ")
 
@@ -181,6 +191,10 @@ def menu():
                     temporada = input("Ingrese la temporada: ")
                     print("AQUI VA LA FUNCION DEL REQUERIMIENTO 7 (HISTORIAL DE PARTIDOS) - Cassandra")
                 elif team_option == "4":
+                    nombre_equipo = input("Ingrese el nombre del equipo: ")
+                    region = input("Ingrese la región del equipo: ")
+                    print("AQUI VA LA FUNCION PARA MOSTRAR 5 EQUIPOS SIMILARES POR REGION")
+                elif team_option == "5":
                     pass
 
             elif user_option == "4":
@@ -188,7 +202,8 @@ def menu():
                 print("--- CONSULTAS POR NOMBRE DEL JUGADOR ---")
                 print("1. Req. 1 - MongoDB")
                 print("2. Req. 6 - MongoDB")
-                print("3. Volver al menu principal")
+                print("3. Apuestas disponibles y jugadores con características similares (DGraph)")
+                print("4. Volver al menu principal")
 
                 player_option = input("Selecciona un requerimiento: ")
 
@@ -197,18 +212,30 @@ def menu():
                 elif player_option == "2":
                     print("AQUI VA LA FUNCION DEL REQUERIMIENTO 6 - MongoDB")
                 elif player_option == "3":
+                    nombre_jugador = input("Ingrese el nombre del jugador: ")
+                    print("AQUI VA LA FUNCION PARA MOSTRAR SUS APUESTAS Y 5 JUGADORES SIMILARES")
+                elif player_option == "4":
                     pass
 
             elif user_option == "5":
                 print("\n--- MENU APUESTAS DISPONIBLES ---")
                 print("1. Consultar por Nombre del Equipo A + Nombre del Equipo B (Req. 5 - MongoDB)")
-                print("2. Volver al menu principal")
+                print("2. Recomendar apuestas por características similares (DGraph)")
+                print("3. Recomendar equipos en racha (DGraph)")
+                print("4. Volver al menu principal")
 
                 bet_option = input("Selecciona una opción: ")
 
                 if bet_option == "1":
                     print("AQUI VA LA FUNCION DEL REQUERIMIENTO 5 - MongoDB")
                 elif bet_option == "2":
+                    porcentaje_ganancia = input("Ingrese el porcentaje de ganancia de la apuesta original: ")
+                    liga = input("Ingrese la liga de la apuesta original: ")
+                    equipo = input("Ingrese el equipo de la apuesta original: ")
+                    print("AQUI VA LA FUNCION PARA MOSTRAR 5 APUESTAS SIMILARES POR GANANCIA, LIGA O EQUIPO")
+                elif bet_option == "3":
+                    print("AQUI VA LA FUNCION PARA MOSTRAR 5 EQUIPOS RECOMENDADOS POR SUS ULTIMOS 10 PARTIDOS")
+                elif bet_option == "4":
                     pass
         
         else:

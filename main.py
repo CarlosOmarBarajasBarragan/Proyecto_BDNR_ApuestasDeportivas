@@ -47,16 +47,18 @@ def menu():
 
                 if user_opc == "1":
                     print("\n--- DATOS DE MI PERFIL ---")
-                    print(" AQUI VA LA FUNCION PARA MOSTRAR LOS DATOS DEL PERFIL")
-                    print("1. Ranking de jugadores (Regional)")
-                    print("2. Volver al menu principal")
+                    print("1. Consultar por identificador/email del usuario autenticado (Req. 2 - MongoDB)")
+                    print("2. Ranking de jugadores (Regional)")
+                    print("3. Volver al menu principal")
 
 
                     opt = input("Selecciona una opción: ")
 
                     if opt == "1":
-                        print(" AQUI VA LA FUNCION PARA MOSTRAR EL RANKING DE JUGADORES")
+                        print("AQUI VA LA FUNCION DEL REQUERIMIENTO 2")
                     elif opt == "2":
+                        print(" AQUI VA LA FUNCION PARA MOSTRAR EL RANKING DE JUGADORES")
+                    elif opt == "3":
                         pass
 
                 elif user_opc == "2":
@@ -110,29 +112,59 @@ def menu():
                 torneo = input("Ingrese el nombre del torneo: ")
 
                 print("\n--- MENU TORNEO ---")
-                print("1. Datos de un torneo")
-                print("2. Volver al menu principal")
+                print("1. Req. 4 - MongoDB - Consulta por nombre del torneo")
+                print("2. Req. 8 - MongoDB - Consulta por nombre del torneo")
+                print("3. Volver al menu principal")
 
 
                 option = input("Selecciona una opción: ")
 
                 if option == "1":
-                    print("\n--- DATOS DE UN TORNEO ---")
-                    print(" AQUI VA LA FUNCION PARA MOSTRAR LOS DATOS DEL TORNEO")
-                    print("1. Volver al menu principal")
-
-
-                    opt = input("Selecciona una opción: ")
-
-                    if opt == "1":
-                        pass
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 4")
+                elif option == "2":
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 8")
+                elif option == "3":
+                    pass
             
             elif user_option == "3":
-                pass
+                print("\n--- MENU EQUIPO ---")
+                print("1. Consultar por nombre del equipo (Req. 7 - MongoDB)")
+                print("2. Volver al menu principal")
+
+                team_option = input("Selecciona una opción: ")
+
+                if team_option == "1":
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 7")
+                elif team_option == "2":
+                    pass
+
             elif user_option == "4":
-                pass
+                print("\n--- MENU JUGADOR ---")
+                print("--- CONSULTAS POR NOMBRE DEL JUGADOR ---")
+                print("1. Req. 1 - MongoDB")
+                print("2. Req. 6 - MongoDB")
+                print("3. Volver al menu principal")
+
+                player_option = input("Selecciona un requerimiento: ")
+
+                if player_option == "1":
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 1")
+                elif player_option == "2":
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 6")
+                elif player_option == "3":
+                    pass
+
             elif user_option == "5":
-                pass
+                print("\n--- MENU APUESTAS DISPONIBLES ---")
+                print("1. Consultar por Nombre del Equipo A + Nombre del Equipo B (Req. 5 - MongoDB)")
+                print("2. Volver al menu principal")
+
+                bet_option = input("Selecciona una opción: ")
+
+                if bet_option == "1":
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 5")
+                elif bet_option == "2":
+                    pass
         
         else:
             print("Opción inválida")

@@ -55,7 +55,7 @@ def menu():
                     opt = input("Selecciona una opción: ")
 
                     if opt == "1":
-                        print("AQUI VA LA FUNCION DEL REQUERIMIENTO 2")
+                        print("AQUI VA LA FUNCION DEL REQUERIMIENTO 2 - MongoDB")
                     elif opt == "2":
                         print(" AQUI VA LA FUNCION PARA MOSTRAR EL RANKING DE JUGADORES")
                     elif opt == "3":
@@ -64,26 +64,40 @@ def menu():
                 elif user_opc == "2":
                     print("\n--- HISTORIAL DE APUESTAS ---")
                     print(" AQUI VA LA FUNCION PARA MOSTRAR EL HISTORIAL DE APUESTAS")
-                    print("1. Mis mejores apuestas")
+                    print("1. Requerimiento 1 - Historial de apuestas - Cassandra")
+                    print("2. Requerimiento 2 - Top 5 apuestas más rentables - Cassandra")
+                    print("3. Mis mejores apuestas")
+                    print("4. Volver al menu principal")
+
+
+                    opt = input("Selecciona una opción: ")
+
+                    if opt == "1":
+                        nombre_usuario = input("Ingrese el nombre de usuario: ")
+                        temporada = input("Ingrese la temporada: ")
+                        print("AQUI VA LA FUNCION DEL REQUERIMIENTO 1 - Cassandra")
+                    elif opt == "2":
+                        nombre_usuario = input("Ingrese el nombre de usuario: ")
+                        temporada = input("Ingrese la temporada: ")
+                        print("AQUI VA LA FUNCION DEL REQUERIMIENTO 2 - Cassandra")
+                    elif opt == "3":
+                        print(" AQUI VA LA FUNCION PARA MOSTRAR LAS MEJORES  APUESTAS")
+                    elif opt == "4":
+                        pass
+
+                elif user_opc == "3":
+                    print("\n--- HISTORIAL DE TRANSACCIONES ---")
+                    print("1. Requerimiento 8 - Historial de transacciones de un usuario - Cassandra")
                     print("2. Volver al menu principal")
 
 
                     opt = input("Selecciona una opción: ")
 
                     if opt == "1":
-                        print(" AQUI VA LA FUNCION PARA MOSTRAR LAS MEJORES  APUESTAS")
+                        nombre_usuario = input("Ingrese el nombre de usuario: ")
+                        anio_actual = input("Ingrese el año actual: ")
+                        print("AQUI VA LA FUNCION DEL REQUERIMIENTO 8 - Cassandra")
                     elif opt == "2":
-                        pass
-
-                elif user_opc == "3":
-                    print("\n--- HISTORIAL DE TRANSACCIONES ---")
-                    print(" AQUI VA LA FUNCION PARA MOSTRAR EL HISTORIAL DE TRANSACCIONES")
-                    print("1. Volver al menu principal")
-
-
-                    opt = input("Selecciona una opción: ")
-
-                    if opt == "1":
                         pass
 
                 elif user_opc == "4":
@@ -114,28 +128,59 @@ def menu():
                 print("\n--- MENU TORNEO ---")
                 print("1. Req. 4 - MongoDB - Consulta por nombre del torneo")
                 print("2. Req. 8 - MongoDB - Consulta por nombre del torneo")
-                print("3. Volver al menu principal")
+                print("3. Requerimiento 3 - Top 5 goleadores por torneo - Cassandra")
+                print("4. Requerimiento 4 - Porteros más goleados del torneo - Cassandra")
+                print("5. Requerimiento 5 - Historial de partidos de un torneo - Cassandra")
+                print("6. Volver al menu principal")
 
 
                 option = input("Selecciona una opción: ")
 
                 if option == "1":
-                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 4")
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 4 - MongoDB")
                 elif option == "2":
-                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 8")
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 8 - MongoDB")
                 elif option == "3":
+                    temporada = input("Ingrese la temporada: ")
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 3 - Cassandra")
+                elif option == "4":
+                    temporada = input("Ingrese la temporada: ")
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 4 (PORTEROS MAS GOLEADOS) - Cassandra")
+                elif option == "5":
+                    temporada = input("Ingrese la temporada: ")
+                    jornada = None
+                    incluir_jornada = input("¿Desea filtrar por jornada? (s/n): ")
+                    if incluir_jornada.lower() == "s":
+                        try:
+                            jornada = int(input("Ingrese la jornada: "))
+                        except ValueError:
+                            print("La jornada debe ser un número entero.")
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 5 - Cassandra")
+                elif option == "6":
                     pass
             
             elif user_option == "3":
                 print("\n--- MENU EQUIPO ---")
                 print("1. Consultar por nombre del equipo (Req. 7 - MongoDB)")
-                print("2. Volver al menu principal")
+                print("2. Requerimiento 6 - Historial de tarjetas de un equipo - Cassandra")
+                print("3. Requerimiento 7 - Historial de partidos de un equipo - Cassandra")
+                print("4. Volver al menu principal")
 
                 team_option = input("Selecciona una opción: ")
 
                 if team_option == "1":
-                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 7")
+                    nombre_equipo = input("Ingrese el nombre del equipo: ")
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 7 - MongoDB")
                 elif team_option == "2":
+                    nombre_equipo = input("Ingrese el nombre del equipo: ")
+                    temporada = input("Ingrese la temporada: ")
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 6 - Cassandra")
+                elif team_option == "3":
+                    nombre_equipo = input("Ingrese el nombre del equipo: ")
+                    nombre_torneo = input("Ingrese el nombre del torneo: ")
+                    temporada = input("Ingrese la temporada: ")
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 7 (HISTORIAL DE PARTIDOS) - Cassandra")
+                elif team_option == "4":
                     pass
 
             elif user_option == "4":
@@ -148,9 +193,9 @@ def menu():
                 player_option = input("Selecciona un requerimiento: ")
 
                 if player_option == "1":
-                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 1")
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 1 - MongoDB")
                 elif player_option == "2":
-                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 6")
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 6 - MongoDB")
                 elif player_option == "3":
                     pass
 
@@ -162,7 +207,7 @@ def menu():
                 bet_option = input("Selecciona una opción: ")
 
                 if bet_option == "1":
-                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 5")
+                    print("AQUI VA LA FUNCION DEL REQUERIMIENTO 5 - MongoDB")
                 elif bet_option == "2":
                     pass
         

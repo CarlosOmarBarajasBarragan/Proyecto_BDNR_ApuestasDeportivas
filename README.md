@@ -2,7 +2,7 @@
 ## Integrantes: 
     José Israel León Zermeño--758192    
     Yeshua Miranda Morales-- 758258
-    Carlos Omar Barajas Barragan-- 
+    Carlos Omar Barajas Barragan-- 757151
 
 ## Breve descripción del proyecto (qué hará, para qué).
 La aplicación que vamos a replicar a partir de la base de datos es una casa de apuestas deportivas enfocada en fútbol, en la que existe un usuario apostador. El scope general del proyecto es que la aplicación funcione de forma correcta y consistente en las tres bases de datos del sistema (Cassandra, MongoDB y Dgraph).  Cassandra se enfoca en consultas de datos más recientes usando como pk la temporada actual, basadas en valores máximos y mínimos, como los jugadores con más goles. MongoDB se enfoca en el historial completo de la información de jugadores, usuarios, equipos y ligas, como los goles anotados por un jugador, las apuestas y transacciones de un usuario o los partidos de un equipo. Dgraph se enfoca en las relaciones entre los datos, como las conexiones entre usuarios, jugadores, equipos, ligas y apuestas, para obtener recomendaciones y consultas basadas en dichas conexiones. Quedan fuera del alcance el registro e inicio de sesión de usuarios, otros deportes distintos al fútbol, la integración con pasarelas de pago reales, la aplicación móvil nativa, la transmisión de partidos en vivo y las validaciones legales o regulatorias

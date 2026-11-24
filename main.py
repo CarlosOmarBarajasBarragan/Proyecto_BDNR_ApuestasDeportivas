@@ -12,6 +12,7 @@ from resources import (
     DgraphResource
 )
 from client import consultar_requerimiento
+from populate import run_populate
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -74,8 +75,7 @@ def menu():
             admin_option = input("Selecciona una opción: ")
 
             if admin_option == "1":
-                # TODO: Llamar al script de ingesta JSON hacia las 3 BDs
-                pass
+                run_populate("instancias_esquema_unificado.csv")
             elif admin_option == "2":
                 # TODO: Llamar al script de limpieza de las 3 BDs
                 pass

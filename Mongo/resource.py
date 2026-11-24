@@ -19,28 +19,28 @@ class MongoApuestasResource:
         resultados = []
 
         if req_num == "1":
-            # TODO: Req 1 - Historial de goles de un jugador[cite: 4, 14]
+            # TODO: Req 1 - Historial de goles de un jugador
             pass
         elif req_num == "2":
-            # TODO: Req 2 - Resumen del historial de apuestas de un usuario[cite: 5, 14]
+            # TODO: Req 2 - Resumen del historial de apuestas de un usuario
             pass
         elif req_num == "3":
-            # TODO: Req 3 - Rendimiento histórico de un equipo por temporada[cite: 5, 14]
+            # TODO: Req 3 - Rendimiento histórico de un equipo por temporada
             pass
         elif req_num == "4":
-            # TODO: Req 4 - Jugadores más jóvenes inscritos por Torneo[cite: 5, 14]
+            # TODO: Req 4 - Jugadores más jóvenes inscritos por Torneo
             pass
         elif req_num == "5":
-            # TODO: Req 5 - Balance de enfrentamientos directos entre dos equipos[cite: 5, 14]
+            # TODO: Req 5 - Balance de enfrentamientos directos entre dos equipos
             pass
         elif req_num == "6":
-            # TODO: Req 6 - Trayectoria de un jugador[cite: 5, 14]
+            # TODO: Req 6 - Trayectoria de un jugador
             pass
         elif req_num == "7":
-            # TODO: Req 7 - Resultados de un equipo en el Torneo actual[cite: 6, 14]
+            # TODO: Req 7 - Resultados de un equipo en el Torneo actual
             pass
         elif req_num == "8":
-            # TODO: Req 8 - Tabla de posiciones (Torneo actual)[cite: 6]
+            # TODO: Req 8 - Tabla de posiciones (Torneo actual)
             pass
 
         resp.media = resultados

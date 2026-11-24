@@ -1,3 +1,7 @@
 pymongo
 cassandra-driver
 pydgraph
+pandas
+falcon
+requests
+uvicorn[standard]

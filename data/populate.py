@@ -7,9 +7,9 @@ import pydgraph
 
 from connect import (
     get_mongo_db,
-    get_cassandra_session,
-    get_dgraph_client,
-    setup_indexes
+    setup_mongo_indexes
+    # get_cassandra_session,
+    # get_dgraph_client,
 )
 
 
@@ -41,7 +41,6 @@ def populate_cassandra(session, df, keyspace="apuestas_ks"):
     """)
     session.set_keyspace(keyspace)
 
-    # DDL de las 7 tablas según el diseño
     ddls = [
         """
         CREATE TABLE IF NOT EXISTS Apuestas_Usuario (
@@ -140,12 +139,10 @@ def populate_cassandra(session, df, keyspace="apuestas_ks"):
     for ddl in ddls:
         session.execute(ddl)
 
-    # Mapas auxiliares desde el CSV
     jugadores_df = df[df["tipo_entidad"] == "Jugador"].set_index("jugador_id")
     partidos_df = df[df["tipo_entidad"] == "Partido"].set_index("partido_id")
     stats_df = df[df["tipo_entidad"] == "Estadistica_Jugador_Partido"]
 
-    # Tabla 1: Apuestas_Usuario
     stmt_ap = session.prepare("""
         INSERT INTO Apuestas_Usuario (name_usuario, temporada, fecha_apuesta, ganancia_neta,
         nombre_apuesta, monto_apostado, resultado_apuesta, cuota)
@@ -163,7 +160,6 @@ def populate_cassandra(session, df, keyspace="apuestas_ks"):
             clean_float(r["cuota"])
         ))
 
-    # Tabla 2 y 3: Goleadores_Torneo y Porteros_Goleados_Torneo (agregado de estadísticas)
     stmt_gol = session.prepare("""
         INSERT INTO Goleadores_Torneo (name_torneo, temporada, goles_anotados, nombre_jugador, equipo, partidos_jugados)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -186,7 +182,6 @@ def populate_cassandra(session, df, keyspace="apuestas_ks"):
                 torneo, temp, int(grp["goles_anotados"].sum()), j_nom, eq, pj
             ))
 
-    # Tabla 4: Partidos_Torneo
     stmt_pt = session.prepare("""
         INSERT INTO Partidos_Torneo (name_torneo, temporada, jornada, fecha, equipo_local, equipo_visitante, marcador, estado)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -203,7 +198,6 @@ def populate_cassandra(session, df, keyspace="apuestas_ks"):
             clean_str(r["estado_partido"])
         ))
 
-    # Tabla 5: Tarjetas_Equipo (con conteo acumulado desnormalizado)
     stmt_tar = session.prepare("""
         INSERT INTO Tarjetas_Equipo (name_equipo, temporada, fecha, minuto, name_jugador, partido, tipo_tarjeta, total_amarillas, total_rojas)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -225,7 +219,6 @@ def populate_cassandra(session, df, keyspace="apuestas_ks"):
             acum_tarjetas[(eq, temp)]["am"], acum_tarjetas[(eq, temp)]["ro"]
         ))
 
-    # Tabla 6: Partidos_Equipo (desnormalizado por local y visitante con V/E/D acumulados)
     stmt_pe = session.prepare("""
         INSERT INTO Partidos_Equipo (name_equipo, name_torneo, temporada, fecha, rival, condicion, marcador, resultado, victorias, empates, derrotas)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -258,7 +251,6 @@ def populate_cassandra(session, df, keyspace="apuestas_ks"):
                 acum_ved[key]["v"], acum_ved[key]["e"], acum_ved[key]["d"]
             ))
 
-    # Tabla 7: Transacciones_Usuario
     stmt_trx = session.prepare("""
         INSERT INTO Transacciones_Usuario (name_usuario, anio_actual, fecha, id_transaccion, tipo, monto, metodo_pago, estado, saldo_resultante)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -279,9 +271,10 @@ def populate_cassandra(session, df, keyspace="apuestas_ks"):
     print("Cassandra poblado exitosamente (7 tablas).")
 
 
+# ==============================================================================
 # 2. POPULATE MONGODB (9 Colecciones con ObjectIds relacionales)
+# ==============================================================================
 def populate_mongodb(db, df):
-    # Limpiar colecciones previas
     colecciones = [
         "Torneo", "Equipos", "Jugador", "Plantillas", "Partidos",
         "Estadisticas_jugador_partido", "Tabla_posiciones", "Usuarios", "Apuestas"
@@ -289,7 +282,6 @@ def populate_mongodb(db, df):
     for col in colecciones:
         db[col].drop()
 
-    # Diccionarios de mapeo CSV_ID -> Mongo ObjectId
     id_map = {}
     for code in df["id_entidad"].dropna().unique():
         id_map[code] = ObjectId()
@@ -324,7 +316,7 @@ def populate_mongodb(db, df):
     if equipos_docs:
         db.Equipos.insert_many(equipos_docs)
 
-    # 3. Jugador (con arreglo embebido trayectoria) & 4. Plantillas
+    # 3. Jugador & 4. Plantillas
     jugadores_docs = []
     plantillas_docs = []
     for _, r in df[df["tipo_entidad"] == "Jugador"].iterrows():
@@ -359,7 +351,7 @@ def populate_mongodb(db, df):
         plantillas_docs.append({
             "temporada": clean_str(r["temporada"]),
             "torneo_id": id_map[tor_code],
-            "nombre_liga": clean_str(r["nombre_torneo"]),
+            "nombre_torneo": clean_str(r["nombre_torneo"]),
             "equipo_id": id_map[eq_code],
             "equipo": clean_str(r["nombre_equipo"]),
             "jugador_id": id_map[j_code],
@@ -373,7 +365,7 @@ def populate_mongodb(db, df):
     if plantillas_docs:
         db.Plantillas.insert_many(plantillas_docs)
 
-    # 5. Partidos (con arreglo embebido goles)
+    # 5. Partidos
     partidos_docs = []
     for _, r in df[df["tipo_entidad"] == "Partido"].iterrows():
         p_code = clean_str(r["partido_id"])
@@ -386,7 +378,7 @@ def populate_mongodb(db, df):
                     "jugador": clean_str(gr["nombre_jugador"]),
                     "equipo_id": id_map[clean_str(gr["equipo_id"])],
                     "minuto": clean_int(gr["minuto_incidencia"]),
-                    "tipo": "Normal"
+                    "tipo": "normal"
                 })
 
         partidos_docs.append({
@@ -446,7 +438,7 @@ def populate_mongodb(db, df):
             "_id": id_map[clean_str(r["id_entidad"])],
             "temporada": clean_str(r["temporada"]),
             "torneo_id": id_map[clean_str(r["torneo_id"])],
-            "nombre_liga": clean_str(r["nombre_torneo"]),
+            "nombre_torneo": clean_str(r["nombre_torneo"]),
             "equipo_id": id_map[clean_str(r["equipo_id"])],
             "nombre_equipo": clean_str(r["nombre_equipo"]),
             "puntos": clean_int(r["puntos"]),
@@ -484,7 +476,7 @@ def populate_mongodb(db, df):
             "usuario_id": id_map[clean_str(r["usuario_id"])],
             "partido_id": id_map[clean_str(r["partido_id"])],
             "evento": clean_str(r["evento"]),
-            "liga": clean_str(r["nombre_torneo"]),
+            "torneo": clean_str(r["nombre_torneo"]),
             "tipo_apuesta": clean_str(r["tipo_apuesta"]),
             "pronostico": clean_str(r["pronostico"]),
             "cuota": clean_float(r["cuota"]),
@@ -499,7 +491,9 @@ def populate_mongodb(db, df):
     print("MongoDB poblado exitosamente (9 colecciones).")
 
 
+# ==============================================================================
 # 3. POPULATE DGRAPH (Nodos y Aristas con blank nodes _:id)
+# ==============================================================================
 def populate_dgraph(client, df):
     client.alter(pydgraph.Operation(drop_all=True))
 
@@ -651,7 +645,6 @@ def populate_dgraph(client, df):
             nquads.append({"uid": uid, "dgraph.type": "Lugar", "pais": pais, "continente": cont, "region": reg})
         return uid
 
-    # 1. Torneos
     for _, r in df[df["tipo_entidad"] == "Torneo"].iterrows():
         t_id = clean_str(r["torneo_id"])
         l_uid = get_lugar_uid(clean_str(r["pais"]), clean_str(r["continente"]), clean_str(r["region"]))
@@ -662,7 +655,6 @@ def populate_dgraph(client, df):
             "proviene_de": {"uid": l_uid}
         })
 
-    # 2. Equipos + Estadísticas de Equipo
     for _, r in df[df["tipo_entidad"] == "Equipo"].iterrows():
         e_id = clean_str(r["equipo_id"])
         t_id = clean_str(r["torneo_id"])
@@ -699,7 +691,6 @@ def populate_dgraph(client, df):
             "equipo_genera": {"uid": st_uid}
         })
 
-    # 3. Jugadores + Estadísticas de Jugador
     for _, r in df[df["tipo_entidad"] == "Jugador"].iterrows():
         j_id = clean_str(r["jugador_id"])
         e_id = clean_str(r["equipo_id"])
@@ -729,7 +720,6 @@ def populate_dgraph(client, df):
             "jugador_genera": {"uid": st_uid}
         })
 
-    # 4. Partidos
     for _, r in df[df["tipo_entidad"] == "Partido"].iterrows():
         p_id = clean_str(r["partido_id"])
         t_id = clean_str(r["torneo_id"])
@@ -741,7 +731,6 @@ def populate_dgraph(client, df):
             "se_disputa_en_un": {"uid": f"_:{t_id}"}
         })
 
-    # 5. Usuarios (y aristas es_amigo_de + registra_una)
     apuestas_df = df[df["tipo_entidad"] == "Apuesta"]
     for _, r in df[df["tipo_entidad"] == "Usuario"].iterrows():
         u_id = clean_str(r["usuario_id"])
@@ -766,7 +755,6 @@ def populate_dgraph(client, df):
             usr_node["registra_una"] = user_aps
         nquads.append(usr_node)
 
-    # 6. Apuestas
     for _, r in apuestas_df.iterrows():
         a_id = clean_str(r["apuesta_id"])
         u_id = clean_str(r["usuario_id"])
@@ -799,24 +787,26 @@ def populate_dgraph(client, df):
         txn.discard()
 
 
-# EJECUCIÓN PRINCIPAL
-def run_populate(csv_path="instancias_esquema_unificado.csv"):
+# ==============================================================================
+# EJECUCIÓN PRINCIPAL (Modo solo MongoDB activo)
+# ==============================================================================
+def run_populate(csv_path="data/instancias_esquema_unificado.csv"):
     df = pd.read_csv(csv_path)
 
     mongo_client, mongo_db = get_mongo_db()
-    cassandra_cluster, cassandra_session = get_cassandra_session()
-    dgraph_stub, dgraph_client = get_dgraph_client()
+    # cassandra_cluster, cassandra_session = get_cassandra_session()
+    # dgraph_stub, dgraph_client = get_dgraph_client()
 
     try:
-        populate_cassandra(cassandra_session, df)
+        # populate_cassandra(cassandra_session, df)
         populate_mongodb(mongo_db, df)
-        setup_indexes(mongo_db, dgraph_client)
-        populate_dgraph(dgraph_client, df)
-        print("\n=== CARGA COMPLETA EN LAS 3 BASES DE DATOS ===")
+        setup_mongo_indexes(mongo_db)
+        # populate_dgraph(dgraph_client, df)
+        print("\n=== CARGA COMPLETA EN MONGODB ===")
     finally:
         mongo_client.close()
-        cassandra_cluster.shutdown()
-        dgraph_stub.close()
+        # cassandra_cluster.shutdown()
+        # dgraph_stub.close()
 
 
 if __name__ == "__main__":

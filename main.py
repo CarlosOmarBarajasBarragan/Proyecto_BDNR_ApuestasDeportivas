@@ -69,15 +69,13 @@ def menu():
         elif main_option == "1":
             print("\n--- ACCIONES ADMIN ---")
             print("1. Cargar datos")
-            print("2. Borrar DB")
-            print("3. Volver al menú principal")
+            print("2. Volver al menú principal")
 
             admin_option = input("Selecciona una opción: ")
 
             if admin_option == "1":
                 run_populate("data/instancias_esquema_unificado.csv")
-            elif admin_option == "2":
-                pass
+        
 
         elif main_option == "2":
             print("\n--- ACCIONES USER ---")

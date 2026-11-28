@@ -1,6 +1,6 @@
 # Proyecto_BDNR_ApuestasDeportivas
 ## Integrantes: 
-    José Israel León Zermeño--758192    
+    José Israel León Sermeño--758192    
     Yeshua Miranda Morales-- 758258
     Carlos Omar Barajas Barragan-- 757151
 

@@ -48,3 +48,14 @@ Si usas PowerShell (Windows):
 ```bash
 pip install -r requirements.txt
 ```
+
+## 5. Levantar el servidor
+```bash
+uvicorn main:app --host 127.0.0.1 --port 8001
+```
+
+## 6. Ejecutar el proyecto
+
+```bash
+python main.py
+```

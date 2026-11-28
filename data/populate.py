@@ -7,10 +7,11 @@ import pydgraph
 
 from connect import (
     get_mongo_db,
-    setup_mongo_indexes
-    # get_cassandra_session,
+    setup_mongo_indexes,
+    get_cassandra_session,
     # get_dgraph_client,
 )
+from Cassandra.client import populate_apuestas_usuario
 
 
 def parse_date(val):
@@ -35,26 +36,9 @@ def clean_float(val, default=0.0):
 # 1. POPULATE CASSANDRA (7 Tablas)
 # ==============================================================================
 def populate_cassandra(session, df, keyspace="apuestas_ks"):
-    session.execute(f"""
-        CREATE KEYSPACE IF NOT EXISTS {keyspace}
-        WITH replication = {{'class': 'SimpleStrategy', 'replication_factor': 1}};
-    """)
-    session.set_keyspace(keyspace)
+    populate_apuestas_usuario(session, df, keyspace)
 
     ddls = [
-        """
-        CREATE TABLE IF NOT EXISTS Apuestas_Usuario (
-            name_usuario text,
-            temporada text,
-            fecha_apuesta date,
-            ganancia_neta float,
-            nombre_apuesta text,
-            monto_apostado float,
-            resultado_apuesta text,
-            cuota float,
-            PRIMARY KEY ((name_usuario, temporada), fecha_apuesta, ganancia_neta)
-        ) WITH CLUSTERING ORDER BY (fecha_apuesta DESC, ganancia_neta DESC);
-        """,
         """
         CREATE TABLE IF NOT EXISTS Goleadores_Torneo (
             name_torneo text,
@@ -142,23 +126,6 @@ def populate_cassandra(session, df, keyspace="apuestas_ks"):
     jugadores_df = df[df["tipo_entidad"] == "Jugador"].set_index("jugador_id")
     partidos_df = df[df["tipo_entidad"] == "Partido"].set_index("partido_id")
     stats_df = df[df["tipo_entidad"] == "Estadistica_Jugador_Partido"]
-
-    stmt_ap = session.prepare("""
-        INSERT INTO Apuestas_Usuario (name_usuario, temporada, fecha_apuesta, ganancia_neta,
-        nombre_apuesta, monto_apostado, resultado_apuesta, cuota)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """)
-    for _, r in df[df["tipo_entidad"] == "Apuesta"].iterrows():
-        session.execute(stmt_ap, (
-            clean_str(r["nombre_usuario"]),
-            clean_str(r["temporada"]),
-            clean_str(r["fecha"]),
-            clean_float(r["ganancia_neta"]),
-            f"{clean_str(r['evento'])} - {clean_str(r['pronostico'])}",
-            clean_float(r["monto_apostado"]),
-            clean_str(r["estado_apuesta"]),
-            clean_float(r["cuota"])
-        ))
 
     stmt_gol = session.prepare("""
         INSERT INTO Goleadores_Torneo (name_torneo, temporada, goles_anotados, nombre_jugador, equipo, partidos_jugados)
@@ -788,24 +755,27 @@ def populate_dgraph(client, df):
 
 
 # ==============================================================================
-# EJECUCIÓN PRINCIPAL (Modo solo MongoDB activo)
+# EJECUCIÓN PRINCIPAL (MongoDB y Cassandra)
 # ==============================================================================
 def run_populate(csv_path="data/instancias_esquema_unificado.csv"):
     df = pd.read_csv(csv_path)
 
-    mongo_client, mongo_db = get_mongo_db()
-    # cassandra_cluster, cassandra_session = get_cassandra_session()
-    # dgraph_stub, dgraph_client = get_dgraph_client()
+    mongo_client = None
+    cassandra_cluster = None
 
     try:
-        # populate_cassandra(cassandra_session, df)
+        cassandra_cluster, cassandra_session = get_cassandra_session()
+        mongo_client, mongo_db = get_mongo_db()
+        populate_cassandra(cassandra_session, df)
         populate_mongodb(mongo_db, df)
         setup_mongo_indexes(mongo_db)
         # populate_dgraph(dgraph_client, df)
-        print("\n=== CARGA COMPLETA EN MONGODB ===")
+        print("\n=== CARGA DE CASSANDRA (7 TABLAS) Y MONGODB COMPLETADA ===")
     finally:
-        mongo_client.close()
-        # cassandra_cluster.shutdown()
+        if mongo_client is not None:
+            mongo_client.close()
+        if cassandra_cluster is not None:
+            cassandra_cluster.shutdown()
         # dgraph_stub.close()
 
 

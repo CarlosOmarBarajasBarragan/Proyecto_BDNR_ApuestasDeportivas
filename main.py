@@ -2,13 +2,13 @@ import falcon.asgi
 import logging
 from connect import (
     get_mongo_db,
-    setup_mongo_indexes
-    # get_cassandra_session,
+    setup_mongo_indexes,
+    get_cassandra_session,
     # get_dgraph_client,
 )
 from Mongo.client import consultar_requerimiento
 from Mongo.resource import MongoApuestasResource
-# from Cassandra.resource import CassandraApuestasResource
+from Cassandra.resource import CassandraApuestasResource
 # from DGraph.resource import DgraphApuestasResource
 from data.populate import run_populate
 
@@ -24,9 +24,9 @@ class LoggingMiddleware:
         logger.info(f"Response: {resp.status} for {req.method} {req.uri}")
 
 
-# 1. Conexión a bases de datos (Solo MongoDB activo)
+# 1. Conexión a bases de datos
 mongo_client, mongo_db = get_mongo_db(uri="mongodb://localhost:27017/", db_name="apuestas_db")
-# cassandra_cluster, cassandra_session = get_cassandra_session(hosts=['127.0.0.1'], port=9042)
+cassandra_cluster, cassandra_session = get_cassandra_session(hosts=['127.0.0.1'], port=9042)
 # dgraph_stub, dgraph_client = get_dgraph_client(host='localhost:9080')
 
 # 2. Creación/Verificación de índices en MongoDB
@@ -36,12 +36,14 @@ setup_mongo_indexes(mongo_db)
 app = falcon.asgi.App(middleware=[LoggingMiddleware()])
 
 # 4. Instancia de recursos y registro de rutas
+
+#Mongo
 mongo_resource = MongoApuestasResource(mongo_db)
 app.add_route('/mongo/req/{req_num}', mongo_resource)
-
-# cassandra_resource = CassandraApuestasResource(cassandra_session)
+# Cassandra
+Cassandra_resource = CassandraApuestasResource(cassandra_session)
+app.add_route('/cassandra/req/{req_num}', Cassandra_resource)
 # dgraph_resource = DgraphApuestasResource(dgraph_client)
-# app.add_route('/cassandra/req/{req_num}', cassandra_resource)
 # app.add_route('/dgraph/req/{req_num}', dgraph_resource)
 
 
@@ -58,7 +60,7 @@ def menu():
             print("Cerrando conexiones y saliendo...")
             try:
                 mongo_client.close()
-                # cassandra_cluster.shutdown()
+                cassandra_cluster.shutdown()
                 # dgraph_stub.close()
             except Exception as e:
                 print(f"Aviso al cerrar conexiones: {e}")
@@ -66,7 +68,7 @@ def menu():
 
         elif main_option == "1":
             print("\n--- ACCIONES ADMIN ---")
-            print("1. Cargar datos (MongoDB)")
+            print("1. Cargar datos")
             print("2. Borrar DB")
             print("3. Volver al menú principal")
 
